@@ -71,13 +71,14 @@ def sweep():
 if '--wait' in sys.argv[2:]:
     # Edge routing and individual assets converge separately. A ready homepage
     # alone is not evidence that the full deployed artifact is ready.
-    readiness_deadline = time.monotonic() + 120
+    readiness_budget = 180
+    readiness_deadline = time.monotonic() + readiness_budget
     observations = []
     consecutive = 0
     stable_since = None
     while time.monotonic() < readiness_deadline:
         results = sweep()
-        observations.append({'elapsed_seconds': round(time.monotonic() - (readiness_deadline - 120), 3), 'checks': results})
+        observations.append({'elapsed_seconds': round(time.monotonic() - (readiness_deadline - readiness_budget), 3), 'checks': results})
         Path('cloudflare-readiness-proof.json').write_text(json.dumps(observations, indent=2) + '\n')
         if all(result['passed'] for result in results):
             consecutive += 1
