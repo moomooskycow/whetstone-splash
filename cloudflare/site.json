@@ -1,0 +1,8 @@
+{
+  "repo": "moomooskycow/whetstone-splash",
+  "source_commit": "df897f2a5d837f9544a844ab780a7af1ac8c3e9c",
+  "source_folder": ".",
+  "project_prefix": "whetstone-splash",
+  "before_url": "https://moomooskycow.github.io/whetstone-splash/",
+  "build_kind": "jekyll"
+}
