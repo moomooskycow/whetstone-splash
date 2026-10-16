@@ -32,4 +32,12 @@ original archive flag after necessary edits. Mint additionally preserves its
 custom hostname and requires chief-only reversible CNAME handling after live
 Cloudflare proof. Source/default-branch merge alone is not migration acceptance.
 
+Whetstone source-link exception, 2026-10-16: Kaylee authorized 71 unambiguous
+rendered-HTML link targets and unlinking eight missing targets while retaining
+their text. Apply that bounded transform to the pinned Markdown source before
+the existing Jekyll build, not to emitted bytes. Refuse changed target counts,
+unknown missing pages, or ambiguous filenames before writing. Preserve literal
+before/after changes in the CI evidence and re-pin exact emitted hashes. This
+does not authorize page invention, semantic redirects, or backend revival.
+
 Shared rules: https://foundations.mistystep.io/
