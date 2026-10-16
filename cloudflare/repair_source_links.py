@@ -12,10 +12,14 @@ ROOT = Path.cwd()
 CONFIG = json.loads(Path('cloudflare/site.json').read_text())
 PREFIX = '/' + CONFIG['project_prefix'] + '/'
 MISSING = {
-    'secure-by-design-principles', 'input-validation-standards',
-    'authentication-authorization-patterns', 'secrets-management-practices',
-    'single-responsibility', 'dependency-injection',
-    'architecture-decision-records', 'meaningful-naming',
+    Path('docs/leyline/bindings/categories/security/secure-by-design-principles.md'),
+    Path('docs/leyline/bindings/categories/security/input-validation-standards.md'),
+    Path('docs/leyline/bindings/categories/security/authentication-authorization-patterns.md'),
+    Path('docs/leyline/bindings/categories/security/secrets-management-practices.md'),
+    Path('docs/leyline/bindings/core/single-responsibility.md'),
+    Path('docs/leyline/bindings/core/dependency-injection.md'),
+    Path('docs/leyline/bindings/core/architecture-decision-records.md'),
+    Path('docs/leyline/bindings/core/meaningful-naming.md'),
 }
 # Only Markdown corresponding to the public emitted allowlist is in scope.
 markdown = []
@@ -35,7 +39,7 @@ for source in markdown:
     original = source.read_text()
     page = 'https://whetstone-splash-site.mistystep.io' + PREFIX + source.with_suffix('.html').as_posix()
 
-    def repair(match):
+    def repair(match, source=source, page=page):
         text, target = match.groups()
         url = urllib.parse.urlsplit(urllib.parse.urljoin(page, target))
         if url.netloc != 'whetstone-splash-site.mistystep.io' or not url.path.endswith('.md'):
@@ -51,7 +55,7 @@ for source in markdown:
             destination = urllib.parse.urlunsplit(('', '', destination, url.query, url.fragment))
             replacement = '[' + text + '](' + destination + ')'
             action = 'rendered_html'
-        elif not candidates and local.stem in MISSING:
+        elif not candidates and local in MISSING:
             destination = None
             replacement = text
             action = 'unlink_keep_text'
