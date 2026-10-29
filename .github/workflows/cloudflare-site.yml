@@ -12,7 +12,7 @@ concurrency:
 jobs:
   static-site:
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
-    runs-on: ubuntu-24.04
+    runs-on: [self-hosted, hetzner-ci, whetstone-splash-ci]
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -32,6 +32,11 @@ jobs:
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: '20.20.2'
+      - name: Prepare Ruby runtime prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes libyaml-0-2 libgmp10
+          sudo install -d -o "$(id -u)" -g "$(id -g)" /opt/hostedtoolcache /home/runner
       - uses: ruby/setup-ruby@651ff0d62c5c79bed6d53ec518387aae20e72c1a # v1
         with:
           ruby-version: '3.3.4'
@@ -119,6 +124,10 @@ jobs:
             cloudflare-source-link-proof.json
             rollback-*.json
           if-no-files-found: ignore
+
+      - name: Install GitHub CLI for default-branch promotion
+        if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.CLOUDFLARE_SITE_PROMOTED == 'true'
+        run: sudo apt-get update && sudo apt-get install --yes gh
 
       - name: Refuse stale default-branch promotion
         if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && vars.CLOUDFLARE_SITE_PROMOTED == 'true'
